@@ -5,20 +5,33 @@ import com.battleship.enumeration.ShipType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Ship {
 
+    private String name;
+    private String state;
     private Point position;
-    private ShipType shipType;
     private Direction direction;
+    private ShipType shipType;
+    private int hit;
+    private HashMap<Integer, Integer> hitList = new HashMap<>();
 
     public Ship() {
     }
 
     public Ship(int positionX, int positionY, ShipType shipType, Direction direction) {
+        this.name = "Ship " + positionX + " " + positionY + " ";
         this.position = new Point(positionX, positionY);
         this.shipType = shipType;
         this.direction = direction;
     }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
 
     public Ship(int positionX, int positionY, ShipType shipType) {
         this.position = new Point(positionX, positionY);
@@ -48,6 +61,38 @@ public class Ship {
         this.direction = direction;
     }
 
+    public String getState() { return state; }
+
+    public void canHit(int shotPositionX, int shotPositionY) {
+        if (!(hitList.containsKey(shotPositionX) && hitList.containsValue(shotPositionY))) {
+            hitList.put(shotPositionX, shotPositionY);
+            balanceOfHealth(shotPositionX, shotPositionY);
+        }
+    }
+
+    private void setStateShip() {
+        if (shipType.getHealth() == 100) {
+            state = "All";
+        } else if (shipType.getHealth() < 100) {
+            state = "Wounded";
+        } else  if (shipType.getHealth() == 0) {
+            state = "dead";
+        }
+    }
+
+    private void balanceOfHealth(int shotPositionX, int shotPositionY) {
+        int maxHealth = shipType.getDeckerCount();
+        int hit = 0;
+        if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
+            hit = shipType.getDeckerCount() - 1;
+            shipType.setHealth((100 / maxHealth) * hit);
+            setStateShip();
+        } else {
+            shipType.setHealth((100 / maxHealth) * shipType.getDeckerCount());
+            setStateShip();
+        }
+    }
+
     /**
      * Indicate the coordinates that cannot be used by another neighbor ships.
      *
@@ -63,7 +108,6 @@ public class Ship {
         return new Rectangle(beginOfSquare, endOfSquare);
 
     }
-
 
     /**
      * Indicates the only ship itself without adjacent(private) territories.
@@ -83,6 +127,9 @@ public class Ship {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE).append("shipType", shipType)
+                .append("name", name)
+                .append("state", state)
+                .append("health", shipType.getHealth())
                 .append("position", position)
                 .append("direction", direction)
                 .toString();
