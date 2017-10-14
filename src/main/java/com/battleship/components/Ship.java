@@ -63,10 +63,17 @@ public class Ship {
 
     public String getState() { return state; }
 
+<<<<<<< HEAD
     public void canHit(Point p) {
         if (!(hitList.containsKey(p.getX()) && hitList.containsValue(p.getY()))) {
             hitList.put(p.getX(), p.getY());
             balanceOfHealth(p.getX(), p.getY());
+=======
+    public void canHit(int shotPositionX, int shotPositionY) {
+        if (!(hitList.containsKey(shotPositionX) && hitList.containsValue(shotPositionY))) {
+            hitList.put(shotPositionX, shotPositionY);
+            balanceOfHealth(shotPositionX, shotPositionY);
+>>>>>>> d995a43e56d63611f19a9797a4f8b0f4d79fb1eb
         }
     }
 
@@ -82,8 +89,15 @@ public class Ship {
 
     private void balanceOfHealth(int shotPositionX, int shotPositionY) {
         int maxHealth = shipType.getDeckerCount();
+<<<<<<< HEAD
         if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
             shipType.setHealth((100 / maxHealth) * shipType.getDeckerCount() - 1);
+=======
+        int hit = 0;
+        if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
+            hit = shipType.getDeckerCount() - 1;
+            shipType.setHealth((100 / maxHealth) * hit);
+>>>>>>> d995a43e56d63611f19a9797a4f8b0f4d79fb1eb
             setStateShip();
         } else {
             shipType.setHealth((100 / maxHealth) * shipType.getDeckerCount());
