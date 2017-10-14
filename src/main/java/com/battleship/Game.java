@@ -33,6 +33,7 @@ public class Game {
 
         // print out the field with ships to the console
         ConsoleFieldPrinter consoleFieldPrinter = new ConsoleFieldPrinter(field);
+
         consoleFieldPrinter.print();
 
     }
@@ -40,6 +41,10 @@ public class Game {
     private static void generateShipsAndPutOnTheField(Field field, ShipType shipType, int countOfShips, ShipGenerator shipGenerator) {
         Stream.iterate(0, i -> i).limit(countOfShips).forEach(o -> {
             Ship ship = shipGenerator.generate(shipType);
+            ship.canHit(2, 2);
+            ship.canHit(2, 3);
+            ship.canHit(2, 4);
+            System.out.println(ship.toString());
             field.addShip(ship);
         });
     }
