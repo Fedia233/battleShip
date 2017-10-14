@@ -8,6 +8,7 @@ import static com.battleship.enumeration.ShipType.THREE_DECKER;
 import java.util.stream.Stream;
 
 import com.battleship.components.Field;
+import com.battleship.components.Point;
 import com.battleship.components.Ship;
 import com.battleship.enumeration.ShipType;
 import com.battleship.generator.ShipGenerator;
@@ -41,10 +42,6 @@ public class Game {
     private static void generateShipsAndPutOnTheField(Field field, ShipType shipType, int countOfShips, ShipGenerator shipGenerator) {
         Stream.iterate(0, i -> i).limit(countOfShips).forEach(o -> {
             Ship ship = shipGenerator.generate(shipType);
-            ship.canHit(2, 2);
-            ship.canHit(2, 3);
-            ship.canHit(2, 4);
-            System.out.println(ship.toString());
             field.addShip(ship);
         });
     }

@@ -82,10 +82,8 @@ public class Ship {
 
     private void balanceOfHealth(int shotPositionX, int shotPositionY) {
         int maxHealth = shipType.getDeckerCount();
-        int hit = 0;
         if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
-            hit = shipType.getDeckerCount() - 1;
-            shipType.setHealth((100 / maxHealth) * hit);
+            shipType.setHealth((100 / maxHealth) * shipType.getDeckerCount() - 1);
             setStateShip();
         } else {
             shipType.setHealth((100 / maxHealth) * shipType.getDeckerCount());
