@@ -7,16 +7,17 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class Ship {
 
     private String name;
-    private String state;
+    private String state = "All";
     private Point position;
     private Direction direction;
     private ShipType shipType;
-    private HashMap<Integer, Integer> hitList = new HashMap<>();
+    private HashSet<Point> hitList = new HashSet<>();
 
     public Ship() {
     }
@@ -63,19 +64,11 @@ public class Ship {
     public String getState() { return state; }
 
     public void canHit(Point p) {
-        if (!(hitList.containsKey(p.getX()) && hitList.containsValue(p.getY()))) {
-            hitList.put(p.getX(), p.getY());
+        if (!(hitList.contains(p))) {
+            hitList.add(p);
             balanceOfHealth(p.getX(), p.getY());
         }
     }
-
-    public void canHit ( int shotPositionX, int shotPositionY){
-            if (!(hitList.containsKey(shotPositionX) && hitList.containsValue(shotPositionY))) {
-                hitList.put(shotPositionX, shotPositionY);
-                balanceOfHealth(shotPositionX, shotPositionY);
-            }
-    }
-
 
     private void setStateShip() {
         if (shipType.getHealth() == 100) {
@@ -89,16 +82,20 @@ public class Ship {
 
     private void balanceOfHealth(int shotPositionX, int shotPositionY) {
         int maxHealth = shipType.getDeckerCount();
-        if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
-            shipType.setHealth((100 / maxHealth) * shipType.getDeckerCount() - 1);
-            int hit = 0;
+        for (Point hitPoint : hitList) {
             if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
-                hit = shipType.getDeckerCount() - 1;
-                shipType.setHealth((100 / maxHealth) * hit);
-                setStateShip();
+                shipType.setHealth((100.0 / maxHealth) * (shipType.getDeckerCount() - 1));
+                int hit = 0;
+                if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
+                    hit = shipType.getDeckerCount() - 1;
+                    shipType.setHealth((100.0 / maxHealth) * hit);
+                    setStateShip();
+                } else {
+                    shipType.setHealth(shipType.getDeckerCount());
+                    setStateShip();
+                }
             } else {
-                shipType.setHealth((100 / maxHealth) * shipType.getDeckerCount());
-                setStateShip();
+                shipType.setHealth(100.0);
             }
         }
     }
