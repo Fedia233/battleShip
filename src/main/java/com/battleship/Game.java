@@ -5,6 +5,7 @@ import static com.battleship.enumeration.ShipType.FOUR_DECKER;
 import static com.battleship.enumeration.ShipType.SINGLE_DECKER;
 import static com.battleship.enumeration.ShipType.THREE_DECKER;
 
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 import com.battleship.components.Field;

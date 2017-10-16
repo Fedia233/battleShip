@@ -1,6 +1,7 @@
 package com.battleship.components;
 
 import com.battleship.enumeration.Direction;
+import com.battleship.enumeration.ShipState;
 import com.battleship.enumeration.ShipType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -12,11 +13,12 @@ import java.util.Map;
 
 public class Ship {
 
+    private final static int STATION_REFERENCE = 100;
     private String name;
-    private String state = "All";
     private Point position;
     private Direction direction;
     private ShipType shipType;
+    private ShipState shipState;
     private HashSet<Point> hitList = new HashSet<>();
 
     public Ship() {
@@ -26,6 +28,7 @@ public class Ship {
         this.name = "Ship " + positionX + " " + positionY + " ";
         this.position = new Point(positionX, positionY);
         this.shipType = shipType;
+        this.shipState = ShipState.PERFECT;
         this.direction = direction;
         shipType.setHealth(100);
     }
@@ -62,43 +65,28 @@ public class Ship {
         this.direction = direction;
     }
 
-    public String getState() { return state; }
-
     public void canHit(Point p) {
         if (!(hitList.contains(p))) {
-            hitList.add(p);
-            balanceOfHealth(p.getX(), p.getY());
+            if ((position.getX() == p.getX()) && (position.getY() == p.getY())) {
+                hitList.add(p);
+                balanceOfHealth();
+            }
         }
     }
 
     private void setStateShip() {
-        if (shipType.getHealth() == 100) {
-            state = "All";
-        } else if (shipType.getHealth() < 100) {
-            state = "Wounded";
+        if (shipType.getHealth() == STATION_REFERENCE) {
+            shipState = ShipState.PERFECT;
+        } else if (shipType.getHealth() < STATION_REFERENCE  && shipType.getHealth() > 0) {
+           shipState = ShipState.WOUNDED;
         } else  if (shipType.getHealth() == 0) {
-            state = "dead";
+           shipState = ShipState.DEAD;
         }
     }
 
-    private void balanceOfHealth(int shotPositionX, int shotPositionY) {
-        int maxHealth = shipType.getDeckerCount();
-        for (Point hitPoint : hitList) {
-            if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
-                shipType.setHealth((100.0 / maxHealth) * (shipType.getDeckerCount() - 1));
-                int hit = 0;
-                if ((position.getX() == shotPositionX) && (position.getY() == shotPositionY)) {
-                    hit = shipType.getDeckerCount() - 1;
-                    shipType.setHealth((100.0 / maxHealth) * hit);
-                    setStateShip();
-                } else {
-                    shipType.setHealth(shipType.getDeckerCount());
-                    setStateShip();
-                }
-            } else {
-
-            }
-        }
+    private void balanceOfHealth() {
+        shipType.setHealth((int)(100.0 / shipType.getDeckerCount()) * (shipType.getDeckerCount() - 1));
+        setStateShip();
     }
 
     /**
@@ -136,7 +124,7 @@ public class Ship {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE).append("shipType", shipType)
                 .append("name", name)
-                .append("state", state)
+                .append("state", shipState)
                 .append("health", shipType.getHealth())
                 .append("position", position)
                 .append("direction", direction)
