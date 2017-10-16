@@ -27,6 +27,7 @@ public class Ship {
         this.position = new Point(positionX, positionY);
         this.shipType = shipType;
         this.direction = direction;
+        shipType.setHealth(100);
     }
 
     public String getName() { return name; }
@@ -95,7 +96,7 @@ public class Ship {
                     setStateShip();
                 }
             } else {
-                shipType.setHealth(100.0);
+
             }
         }
     }
